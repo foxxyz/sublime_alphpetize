@@ -1,0 +1,10 @@
+[
+    {
+        "id": "edit",
+        "children":
+        [
+            {"id": "permute"},
+            { "command": "alphpetize", "caption": "Sort Functions" }
+        ]
+    }
+]
