@@ -15,8 +15,8 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 			class_line = view.substr(view.line(region))
 			indentation = class_line.count('\t') * '\t'
 
-			# find next line with same indentation
-			for end_line in view.find_all(r'^' + indentation + '\S+'):
+			# find closing bracket with same indentation
+			for end_line in view.find_all(r'^' + indentation + '\}'):
 				if end_line.begin() > region.end(): 
 					classes.append(sublime.Region(region.end(), end_line.begin()))
 					break
@@ -34,7 +34,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 	# Call once per class
 	def organize_class(self, edit, c_region, offset):
 
-		functions = {'public': {}, 'protected': {}, 'private': {}}
+		functions = {'public static': {}, 'public': {}, 'protected static': {}, 'protected': {}, 'private static': {}, 'private': {}}
 		ordered_functions = []
 
 		# Offset class to take previous replacements into account
@@ -44,7 +44,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		for line in self.view.lines(c_region):
 
 			# Look for function definition
-			ffound = re.search('(\t*)(?:static )?(public|protected|private|) ?(?:static )?function ([a-zA-Z0-9_]+)\(', self.view.substr(line))
+			ffound = re.search('^(\t*)(?:static )?(public|protected|private|) ?(?:static )?function ([a-zA-Z0-9_]+)\(', self.view.substr(line))
 			if ffound:
 
 				# Note indentation and initial beginning
@@ -56,7 +56,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 					if end_line.begin() < line.begin():
 						# Reset function beginning pointer when end brace encountered
 						if re.search('\}', self.view.substr(end_line)): function_begin = line.begin()
-						elif re.match(r'^' + indentation + '/\*', self.view.substr(end_line)): function_begin = end_line.begin()
+						elif re.match(r'^\s*(/\*|//)', self.view.substr(end_line)): function_begin = end_line.begin()
 					if end_line.begin() > line.end() and re.match(r'^' + indentation + '\S+', self.view.substr(end_line)): 
 						function_region = sublime.Region(function_begin, end_line.end())
 						break
@@ -64,6 +64,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 				# Add to dictionary
 				keyword = ffound.group(2)
 				if keyword == '': keyword = 'public'
+				if re.search('\s+static\s+', ffound.group(0)): keyword += ' static'
 				functions[keyword][ffound.group(3)] = function_region
 				ordered_functions.append(function_region)
 
@@ -73,10 +74,11 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		for i in range(len(ordered_functions) - 1):
 			pre_class += self.view.substr(sublime.Region(ordered_functions[i].end(), ordered_functions[i + 1].begin()))
 		pre_class += self.view.substr(sublime.Region(ordered_functions[-1].end(), c_region.end()))
-		
+		pre_class = re.sub('(\n\n)+', '\n\n', pre_class)
+				
 		# Sort functions by visibility and name
 		sorted_class = '\n\n'
-		for visibility in ['public', 'protected', 'private']:
+		for visibility in ['public static', 'public', 'protected static', 'protected', 'private static', 'private']:
 			for name in sorted(functions[visibility].keys()):
 				sorted_class += self.view.substr(functions[visibility][name]) + '\n\n'
 
