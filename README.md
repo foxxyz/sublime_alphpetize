@@ -5,7 +5,7 @@ Dealing with large volumes of unorganized code? Do you have Organizational OCD l
 
 The Alphpetize plugin for Sublime Text 2 scans your PHP file for class methods and organizes them by visibility and function name.
 
-Be warned: This plugin is in alphp stage and may not work correctly.
+*Be warned: This plugin is in alphp stage and may not work correctly.*
 
 Installation
 ------------
@@ -31,7 +31,7 @@ The plugin should be picked up automatically. If not, restart Sublime Text.
 Usage
 -----
 
-Select `Sort Functions` from the `Edit` menu.
+After installation, select `Sort Methods` from the `Edit` menu.
 
 Example
 -------
@@ -89,3 +89,15 @@ After running Alphpetize, it should look at follows:
 	}
 	
 And yes, Alphpetize can also handle files with multiple class definitions.
+
+### What about static methods?
+
+Static methods are placed at the top of their visibility group.
+
+### What about comments?
+
+[DocBlocks](http://en.wikipedia.org/wiki/PHPDoc) and single `//`-style comments preceding their functions will be preserved during sorting.
+
+### What about everything else?
+
+Anything else found floating inbetween function definitions will be collected at the top of the class. (Why is there code between your methods anyway?)
