@@ -5,6 +5,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		
 		view = self.view
+		self.function_count = 0
 
 		# Find classes
 		classes = []
@@ -29,10 +30,14 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		for c in classes:
 			offset += self.organize_class(edit, c, offset)
 
-		sublime.status_message('Functions sorted!')
+		sublime.status_message(str(self.function_count) + ' method(s) sorted in ' + str(len(classes)) + ' class(es)!')
+		view.show(0)
 
 	# Call once per class
 	def organize_class(self, edit, c_region, offset):
+		"""
+		Find functions in a class, reorder them and write them back into the class
+		"""
 
 		functions = {'public static': {}, 'public': {}, 'protected static': {}, 'protected': {}, 'private static': {}, 'private': {}}
 		ordered_functions = []
@@ -68,7 +73,9 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 				functions[keyword][ffound.group(3)] = function_region
 				ordered_functions.append(function_region)
 
-		
+		# Store stats
+		self.function_count += len(ordered_functions)
+
 		# Collect code between methods
 		pre_class = self.view.substr(sublime.Region(c_region.begin(), ordered_functions[0].begin()))
 		for i in range(len(ordered_functions) - 1):

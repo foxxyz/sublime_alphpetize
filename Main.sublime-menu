@@ -4,7 +4,7 @@
         "children":
         [
             {"id": "permute"},
-            { "command": "alphpetize", "caption": "Sort Functions" }
+            { "command": "alphpetize", "caption": "Sort Methods" }
         ]
     }
 ]
