@@ -49,7 +49,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		for line in self.view.lines(c_region):
 
 			# Look for function definition
-			ffound = re.search('^(\t*)(?:static )?(public|protected|private|) ?(?:static )?function ([a-zA-Z0-9_]+)\(', self.view.substr(line))
+			ffound = re.search('^(\t*)(?:static )?(public|protected|private|) ?(?:static )?function ([a-zA-Z0-9_]+)\s*\(', self.view.substr(line))
 			if ffound:
 
 				# Note indentation and initial beginning
