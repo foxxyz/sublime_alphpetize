@@ -89,7 +89,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 			for name in sorted(functions[visibility].keys()):
 				sorted_class += self.view.substr(functions[visibility][name]) + '\n\n'
 
-		sorted_class = '\r' + pre_class.strip('\n\r') + '\r' + sorted_class
+		sorted_class = '\r\n\n' + pre_class.strip('\n\r') + sorted_class
 
 		# Replace class contents
 		self.view.replace(edit, c_region, sorted_class)
