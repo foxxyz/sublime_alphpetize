@@ -49,7 +49,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		for line in self.view.lines(c_region):
 
 			# Look for function definition
-			ffound = re.search('^(\t*)(?:static )?(public|protected|private|) ?(?:static )?function ([a-zA-Z0-9_]+)\s*\(', self.view.substr(line))
+			ffound = re.search('^(\s*)(?:static )?(public|protected|private|) ?(?:static )?function ([a-zA-Z0-9_]+)\s*\(', self.view.substr(line))
 			if ffound:
 
 				# Note indentation and initial beginning
@@ -72,6 +72,11 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 				if re.search('\s+static\s+', ffound.group(0)): keyword += ' static'
 				functions[keyword][ffound.group(3)] = function_region
 				ordered_functions.append(function_region)
+
+		# Make sure we have functions
+		if not ordered_functions:
+			sublime.error_message('No functions found in class.')
+			return
 
 		# Store stats
 		self.function_count += len(ordered_functions)
