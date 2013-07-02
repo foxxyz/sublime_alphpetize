@@ -9,12 +9,18 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 
 		# Find classes
 		classes = []
-		operation_regions = view.find_all('.*class \w+.*\{')
+		operation_regions = view.find_all('.*class \w+.*\{?')
 		for region in operation_regions:
 
 			# Get full line and count indentation
 			class_line = view.substr(view.line(region))
 			indentation = class_line.count('\t') * '\t'
+			
+			# Deal with multi-line class definitions
+			if class_line.find('{') == -1: 
+				class_line_end = region.end()
+				while view.substr(class_line_end) != '{': class_line_end += 1
+				region = sublime.Region(region.begin(), class_line_end + 1)
 
 			# find closing bracket with same indentation
 			for end_line in view.find_all(r'^' + indentation + '\}'):
@@ -62,7 +68,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 						# Reset function beginning pointer when end brace encountered
 						if re.search('\}', self.view.substr(end_line)): function_begin = line.begin()
 						elif re.match(r'^\s*(/\*|//)', self.view.substr(end_line)): function_begin = end_line.begin()
-					if end_line.begin() > line.end() and re.match(r'^' + indentation + '\S+', self.view.substr(end_line)): 
+					if end_line.begin() > line.end() and re.match(r'^' + indentation + '[^ {\t\n\r\f\v]+', self.view.substr(end_line)): 
 						function_region = sublime.Region(function_begin, end_line.end())
 						break
 				
@@ -94,7 +100,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 			for name in sorted(functions[visibility].keys()):
 				sorted_class += self.view.substr(functions[visibility][name]) + '\n\n'
 
-		sorted_class = '\r\n\n' + pre_class.strip('\n\r') + sorted_class
+		if pre_class.strip('\n\r'):	sorted_class = '\r\n\n' + pre_class.strip('\n\r') + sorted_class
 
 		# Replace class contents
 		self.view.replace(edit, c_region, sorted_class)
