@@ -52,7 +52,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 
 		functions = {'public static': {}, 'public': {}, 'protected static': {}, 'protected': {}, 'private static': {}, 'private': {}}
 		ordered_functions = []
-		newline = self.newline_styles[self.view.line_endings().lower()]
+		newline = self.newline_styles[self.view.line_endings().lower()] * 2
 
 		# Offset class to take previous replacements into account
 		c_region = sublime.Region(c_region.a + offset, c_region.b + offset)
@@ -98,15 +98,15 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		for i in range(len(ordered_functions) - 1):
 			pre_class += self.view.substr(sublime.Region(ordered_functions[i].end(), ordered_functions[i + 1].begin()))
 		pre_class += self.view.substr(sublime.Region(ordered_functions[-1].end(), c_region.end()))
-		pre_class = re.sub('(' + (newline * 2) + ')+', newline * 2, pre_class)
+		pre_class = re.sub('(' + newline + ')+', newline, pre_class)
 				
 		# Sort functions by visibility and name
-		sorted_class = newline * 2
+		sorted_class = newline
 		for visibility in ['public static', 'public', 'protected static', 'protected', 'private static', 'private']:
 			for name in sorted(functions[visibility].keys()):
-				sorted_class += self.view.substr(functions[visibility][name]) + newline * 2
+				sorted_class += self.view.substr(functions[visibility][name]) + newline
 
-		if pre_class.strip('\n\r'):	sorted_class = newline * 2 + pre_class.strip('\n\r') + sorted_class
+		if pre_class.strip('\n\r'):	sorted_class = newline + pre_class.strip('\n\r') + sorted_class
 
 		# Replace class contents
 		self.view.replace(edit, c_region, sorted_class)
