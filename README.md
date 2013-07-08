@@ -3,16 +3,20 @@ Alphpetize for Sublime
 
 Dealing with large volumes of unorganized code? Do you have Organizational OCD like me? Party people, your dreams have now been fulfilled.
 
-The Alphpetize plugin for Sublime Text 2 scans your PHP file for class methods and organizes them by visibility and function name.
+The Alphpetize plugin for Sublime Text scans your PHP file for class methods and organizes them by visibility and function name.
 
 *Be warned: This plugin is in alphp stage and may not work correctly.*
 
 Installation
 ------------
 
+### Using Sublime Package Control
+
+If you are using the [Sublime Package Managerl](http://wbond.net/sublime_packages/package_control), you can install Alphpetize by selecting `Package Control: Install Package` under the `Sublime Text > Preferences > Package Control` menu item. Type `Alphpetize` and install!
+
 ### With Git
 
-Clone the package into your Sublime Text 2 Packages directory:
+Clone the package into your Sublime Text 2/3 Packages directory:
 
 	git clone https://github.com/foxxyz/sublime_alphpetize.git Alphpetize
 	
@@ -26,7 +30,7 @@ Grab the source from [Github](http://github.com/foxxyz/sublime_alphpetize), copy
 * Linux: `~/.Sublime\ Text\ 2/Packages/` or `~/.config/sublime-text-2/Packages/`
 * Windows: ` %APPDATA%/Sublime Text 2/Packages/` 
 
-The plugin should be picked up automatically. If not, restart Sublime Text.
+The locations for Sublime Text 3 should be identical, disregarding the version number change. The plugin should be picked up automatically. If not, restart Sublime Text.
 
 Usage
 -----
