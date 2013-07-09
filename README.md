@@ -12,7 +12,7 @@ Installation
 
 ### Using Sublime Package Control
 
-If you are using the [Sublime Package Managerl](http://wbond.net/sublime_packages/package_control), you can install Alphpetize by selecting `Package Control: Install Package` under the `Sublime Text > Preferences > Package Control` menu item. Type `Alphpetize` and install!
+If you are using the [Sublime Package Manager](http://wbond.net/sublime_packages/package_control), you can install Alphpetize by selecting `Package Control: Install Package` under the `Sublime Text > Preferences > Package Control` menu item. Type `Alphpetize` and install!
 
 ### With Git
 
