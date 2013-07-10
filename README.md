@@ -102,6 +102,10 @@ Static methods are placed at the top of their visibility group.
 
 [DocBlocks](http://en.wikipedia.org/wiki/PHPDoc) and single `//`-style comments preceding their functions will be preserved during sorting.
 
+### What about traits and interfaces?
+
+Methods defined inside of traits and interfaces are also sorted.
+
 ### What about everything else?
 
 Anything else found floating inbetween function definitions will be collected at the top of the class. (Why is there code between your methods anyway?)
