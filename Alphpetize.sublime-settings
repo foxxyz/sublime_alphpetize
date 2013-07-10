@@ -1,0 +1,5 @@
+{
+   // Prioritize the following functions when sorting methods
+   // Functions with these names will be sorted to the top of their respective visibility group
+   "prioritize": []   
+}

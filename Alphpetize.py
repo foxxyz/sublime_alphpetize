@@ -8,13 +8,15 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		"""
 		Run plugin and collect classes in file
 		"""
+
+		self.settings = sublime.load_settings('Alphpetize.sublime-settings')
 		
 		view = self.view
 		self.function_count = 0
 
 		# Find classes
 		classes = []
-		operation_regions = view.find_all('.*class \w+.*\{?')
+		operation_regions = view.find_all('.*(class|trait|interface) \w+.*\{?')
 		for region in operation_regions:
 
 			# Get full line and count indentation
@@ -34,7 +36,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 					break
 
 		if not classes:
-			sublime.error_message('No classes found! (This might not be a PHP file!)')
+			sublime.error_message('No classes/traits/interfaces found! (This might not be a PHP file!)')
 			return
 
 		offset = 0
@@ -82,7 +84,10 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 				keyword = ffound.group(2)
 				if keyword == '': keyword = 'public'
 				if re.search('\s+static\s+', ffound.group(0)): keyword += ' static'
-				functions[keyword][ffound.group(3)] = function_region
+				# Prioritize to the top if listed in settings
+				if ffound.group(3) in self.settings.get('prioritize'): sortName = '_____'
+				else: sortName = ffound.group(3)
+				functions[keyword][sortName] = function_region
 				ordered_functions.append(function_region)
 
 		# Make sure we have functions
