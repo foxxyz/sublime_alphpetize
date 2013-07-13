@@ -1,5 +1,10 @@
 {
-   // Prioritize the following functions when sorting methods
-   // Functions with these names will be sorted to the top of their respective visibility group
-   "prioritize": []   
+	// Prioritize the following functions when sorting methods
+	// Functions with these names will be sorted to the top of their respective visibility group
+	"prioritize": [],
+
+	// If true, Alphpetize will add an extra newline before the first method, and
+	// after the last method in the class
+	"class_padding": true,
+
 }

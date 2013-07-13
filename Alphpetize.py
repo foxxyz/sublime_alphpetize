@@ -54,7 +54,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 
 		functions = {'public static': {}, 'public': {}, 'protected static': {}, 'protected': {}, 'private static': {}, 'private': {}}
 		ordered_functions = []
-		newline = self.newline_styles[self.view.line_endings().lower()] * 2
+		newline = self.newline_styles[self.view.line_endings().lower()]
 
 		# Offset class to take previous replacements into account
 		c_region = sublime.Region(c_region.a + offset, c_region.b + offset)
@@ -106,12 +106,19 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		pre_class = re.sub('(' + newline + ')+', newline, pre_class)
 				
 		# Sort functions by visibility and name
-		sorted_class = newline
+		sorted_classes = []
 		for visibility in ['public static', 'public', 'protected static', 'protected', 'private static', 'private']:
 			for name in sorted(functions[visibility].keys()):
-				sorted_class += self.view.substr(functions[visibility][name]) + newline
+				sorted_classes.append(self.view.substr(functions[visibility][name]))
 
-		if pre_class.strip('\n\r'):	sorted_class = newline + pre_class.strip('\n\r') + sorted_class
+		# Add pre-class code
+		if pre_class.strip('\n\r'):	sorted_classes.insert(0, pre_class.strip('\n\r'))
+
+		# Combine into string
+		sorted_class = newline + (newline * 2).join(sorted_classes) + newline
+
+		# Add padding
+		if self.settings.get('class_padding'): sorted_class = newline + sorted_class + newline
 
 		# Replace class contents
 		self.view.replace(edit, c_region, sorted_class)
