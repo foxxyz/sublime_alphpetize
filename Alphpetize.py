@@ -103,7 +103,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		for i in range(len(ordered_functions) - 1):
 			pre_class += self.view.substr(sublime.Region(ordered_functions[i].end(), ordered_functions[i + 1].begin()))
 		pre_class += self.view.substr(sublime.Region(ordered_functions[-1].end(), c_region.end()))
-		pre_class = re.sub('(' + newline + ')+', newline, pre_class)
+		pre_class = re.sub('(' + (newline * 2) + ')+', (newline * 2), pre_class)
 				
 		# Sort functions by visibility and name
 		sorted_classes = []
