@@ -108,4 +108,4 @@ Methods defined inside of traits and interfaces are also sorted.
 
 ### What about everything else?
 
-Anything else found floating inbetween function definitions will be collected at the top of the class. (Why is there code between your methods anyway?)
+Anything else found floating inbetween function definitions will be collected at the top of the class.
