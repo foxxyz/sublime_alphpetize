@@ -74,7 +74,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 				for end_line in self.view.lines(c_region):
 					if end_line.begin() < line.begin():
 						# Reset function beginning pointer when end brace encountered
-						if re.search('\}', self.view.substr(end_line)): function_begin = line.begin()
+						if re.search('(\}|\);)', self.view.substr(end_line)): function_begin = line.begin()
 						elif re.match(r'^\s*(/\*|//)', self.view.substr(end_line)): function_begin = end_line.begin()
 					if end_line.begin() > line.end() and re.match(r'^' + indentation + '[^ {\t\n\r\f\v]+', self.view.substr(end_line)): 
 						function_region = sublime.Region(function_begin, end_line.end())
@@ -104,7 +104,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 			pre_class += self.view.substr(sublime.Region(ordered_functions[i].end(), ordered_functions[i + 1].begin()))
 		pre_class += self.view.substr(sublime.Region(ordered_functions[-1].end(), c_region.end()))
 		pre_class = re.sub('(' + newline + ')+', newline, pre_class)
-				
+
 		# Sort functions by visibility and name
 		sorted_classes = []
 		for visibility in ['public static', 'public', 'protected static', 'protected', 'private static', 'private']:
