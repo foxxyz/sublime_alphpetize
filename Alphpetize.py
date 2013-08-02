@@ -16,12 +16,16 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 
 		# Find classes
 		classes = []
-		operation_regions = view.find_all('.*(class|trait|interface) \w+.*\{?')
+		operation_regions = view.find_all('(class|trait|interface) \w+.*\{?')
+		print(str(len(operation_regions)))
 		for region in operation_regions:
 
 			# Get full line and count indentation
 			class_line = view.substr(view.line(region))
 			indentation = class_line.count('\t') * '\t'
+
+			# Ensure we didn't accidentally match a comment line with a reserved keyword in it
+			if not re.match(r"[^*]*(class|trait|interface)", class_line): continue
 			
 			# Deal with multi-line class definitions
 			if class_line.find('{') == -1: 
@@ -69,6 +73,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 				# Note indentation and initial beginning
 				indentation = ffound.group(1)
 				function_begin = line.begin()
+				brace_counter = None;
 
 				# Find where function begins and ends
 				for end_line in self.view.lines(c_region):
@@ -76,9 +81,15 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 						# Reset function beginning pointer when end brace encountered
 						if re.search('(\}|\);)', self.view.substr(end_line)): function_begin = line.begin()
 						elif re.match(r'^\s*(/\*|//)', self.view.substr(end_line)): function_begin = end_line.begin()
-					if end_line.begin() > line.end() and re.match(r'^' + indentation + '[^ {\t\n\r\f\v]+', self.view.substr(end_line)): 
-						function_region = sublime.Region(function_begin, end_line.end())
-						break
+					if end_line.begin() >= line.begin():
+						line_string = self.view.substr(end_line)
+						# Determine end of function by counting braces per line
+						if line_string.count('{') > 0 and brace_counter == None: brace_counter = 0
+						if brace_counter != None: brace_counter = brace_counter + line_string.count('{') - line_string.count('}')
+						# When braces are fully matched, the class must have ended, so note the region and break
+						if brace_counter == 0: 
+							function_region = sublime.Region(function_begin, end_line.end())
+							break
 				
 				# Add to dictionary
 				keyword = ffound.group(2)
@@ -93,7 +104,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		# Make sure we have functions
 		if not ordered_functions:
 			sublime.error_message('No functions found in class.')
-			return
+			return 0
 
 		# Store stats
 		self.function_count += len(ordered_functions)
