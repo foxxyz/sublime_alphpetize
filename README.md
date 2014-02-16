@@ -5,8 +5,6 @@ Dealing with large volumes of unorganized code? Do you have Organizational OCD l
 
 The Alphpetize plugin for Sublime Text scans your PHP file for class methods and organizes them by visibility and function name.
 
-*Be warned: This plugin is in alphp stage and may not work correctly.*
-
 Installation
 ------------
 
