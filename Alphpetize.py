@@ -2,7 +2,7 @@ import sublime, sublime_plugin, re
 
 class AlphpetizeCommand(sublime_plugin.TextCommand):
 
-	newline_styles = {'unix': '\n', 'lf': '\n', 'windows': '\r\n', 'crlf': '\r\n', 'mac os 9': '\r', 'cr': '\r'}
+	newline_styles = {'unix': '\n', 'lf': '\n', 'windows': '\n', 'crlf': '\r\n', 'mac os 9': '\r', 'cr': '\r'}
 
 	def run(self, edit):
 		"""
