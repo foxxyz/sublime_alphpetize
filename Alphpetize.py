@@ -64,12 +64,18 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		functions = {'public static': {}, 'public': {}, 'protected static': {}, 'protected': {}, 'private static': {}, 'private': {}}
 		ordered_functions = []
 		newline = self.newline_styles[self.view.line_endings().lower()]
+		comment_block = 0
 
 		# Offset class to take previous replacements into account
 		c_region = sublime.Region(c_region.a + offset, c_region.b + offset)
 
 		# Cycle through lines
 		for line in self.view.lines(c_region):
+
+			# Skip comment blocks
+			comment_block += self.view.substr(line).count('/*') - self.view.substr(line).count('*/')
+			if comment_block:
+				continue
 
 			# Look for function definition
 			ffound = re.search('^(\s*)(?:static )?(public|protected|private|) ?(?:static )?function ([a-zA-Z0-9_]+)\s*\(', self.view.substr(line))
