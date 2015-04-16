@@ -1,4 +1,8 @@
-import sublime, sublime_plugin, re
+import re
+
+import sublime
+import sublime_plugin
+
 
 class AlphpetizeCommand(sublime_plugin.TextCommand):
 
@@ -10,14 +14,13 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		"""
 
 		self.settings = sublime.load_settings('Alphpetize.sublime-settings')
-		
+
 		view = self.view
 		self.function_count = 0
 
 		# Find classes
 		classes = []
 		operation_regions = view.find_all('(class|trait|interface) \w+.*\{?')
-		print(str(len(operation_regions)))
 		for region in operation_regions:
 
 			# Get full line and count indentation
@@ -25,17 +28,19 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 			indentation = class_line.count('\t') * '\t'
 
 			# Ensure we didn't accidentally match a comment line with a reserved keyword in it
-			if not re.match(r"[^*]*(class|trait|interface)", class_line): continue
-			
+			if not re.match(r"[^*]*(class|trait|interface)", class_line):
+				continue
+
 			# Deal with multi-line class definitions
-			if class_line.find('{') == -1: 
+			if class_line.find('{') == -1:
 				class_line_end = region.end()
-				while view.substr(class_line_end) != '{': class_line_end += 1
+				while view.substr(class_line_end) != '{':
+					class_line_end += 1
 				region = sublime.Region(region.begin(), class_line_end + 1)
 
 			# find closing bracket with same indentation
 			for end_line in view.find_all(r'^' + indentation + '\}'):
-				if end_line.begin() > region.end(): 
+				if end_line.begin() > region.end():
 					classes.append(sublime.Region(region.end(), end_line.begin()))
 					break
 
@@ -59,45 +64,58 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		functions = {'public static': {}, 'public': {}, 'protected static': {}, 'protected': {}, 'private static': {}, 'private': {}}
 		ordered_functions = []
 		newline = self.newline_styles[self.view.line_endings().lower()]
+		comment_block = 0
 
 		# Offset class to take previous replacements into account
 		c_region = sublime.Region(c_region.a + offset, c_region.b + offset)
-		
+
 		# Cycle through lines
 		for line in self.view.lines(c_region):
+
+			# Skip comment blocks
+			comment_block += self.view.substr(line).count('/*') - self.view.substr(line).count('*/')
+			if comment_block:
+				continue
 
 			# Look for function definition
 			ffound = re.search('^(\s*)(?:static )?(public|protected|private|) ?(?:static )?function ([a-zA-Z0-9_]+)\s*\(', self.view.substr(line))
 			if ffound:
 
-				# Note indentation and initial beginning
-				indentation = ffound.group(1)
+				# Note initial beginning
 				function_begin = line.begin()
-				brace_counter = None;
+				brace_counter = None
 
 				# Find where function begins and ends
 				for end_line in self.view.lines(c_region):
 					if end_line.begin() < line.begin():
 						# Reset function beginning pointer when end brace encountered
-						if re.search('(\}|\);)', self.view.substr(end_line)): function_begin = line.begin()
-						elif re.match(r'^\s*(/\*|//)', self.view.substr(end_line)): function_begin = end_line.begin()
+						if re.search('(\}|\);)', self.view.substr(end_line)):
+							function_begin = line.begin()
+						elif re.match(r'^\s*(/\*|//)', self.view.substr(end_line)):
+							function_begin = end_line.begin()
 					if end_line.begin() >= line.begin():
 						line_string = self.view.substr(end_line)
 						# Determine end of function by counting braces per line
-						if line_string.count('{') > 0 and brace_counter == None: brace_counter = 0
-						if brace_counter != None: brace_counter = brace_counter + line_string.count('{') - line_string.count('}')
+						if line_string.count('{') > 0 and brace_counter is None:
+							brace_counter = 0
+						if brace_counter is not None:
+							brace_counter = brace_counter + line_string.count('{') - line_string.count('}')
 						# When braces are fully matched, the class must have ended, so note the region and break
-						if brace_counter == 0: 
+						if brace_counter == 0:
 							function_region = sublime.Region(function_begin, end_line.end())
 							break
-				
+
 				# Add to dictionary
 				keyword = ffound.group(2)
-				if keyword == '': keyword = 'public'
-				if re.search('\s+static\s+', ffound.group(0)): keyword += ' static'
+				if keyword == '':
+					keyword = 'public'
+				if re.search('\s+static\s+', ffound.group(0)):
+					keyword += ' static'
 				# Prioritize to the top if listed in settings
-				if ffound.group(3) in self.settings.get('prioritize'): sortName = '_____'
-				else: sortName = ffound.group(3)
+				if ffound.group(3) in self.settings.get('prioritize'):
+					sortName = '_____'
+				else:
+					sortName = ffound.group(3)
 				functions[keyword][sortName] = function_region
 				ordered_functions.append(function_region)
 
@@ -123,13 +141,15 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 				sorted_classes.append(self.view.substr(functions[visibility][name]))
 
 		# Add pre-class code
-		if pre_class.strip('\n\r'):	sorted_classes.insert(0, pre_class.strip('\n\r'))
+		if pre_class.strip('\n\r'):
+			sorted_classes.insert(0, pre_class.strip('\n\r'))
 
 		# Combine into string
 		sorted_class = newline + (newline * 2).join(sorted_classes) + newline
 
 		# Add padding
-		if self.settings.get('class_padding'): sorted_class = newline + sorted_class + newline
+		if self.settings.get('class_padding'):
+			sorted_class = newline + sorted_class + newline
 
 		# Replace class contents
 		self.view.replace(edit, c_region, sorted_class)
