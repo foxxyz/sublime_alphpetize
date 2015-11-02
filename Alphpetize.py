@@ -128,10 +128,16 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		self.function_count += len(ordered_functions)
 
 		# Collect code between methods
-		pre_class = self.view.substr(sublime.Region(c_region.begin(), ordered_functions[0].begin()))
-		for i in range(len(ordered_functions) - 1):
-			pre_class += self.view.substr(sublime.Region(ordered_functions[i].end(), ordered_functions[i + 1].begin()))
-		pre_class += self.view.substr(sublime.Region(ordered_functions[-1].end(), c_region.end()))
+		pre_class = ""
+		regions = [[c_region.begin(), ordered_functions[0].begin()]] + \
+				[[ordered_functions[i].end(), ordered_functions[i + 1].begin()] for i in range(len(ordered_functions) - 1)] + \
+				[[ordered_functions[-1].end(), c_region.end()]]
+		for begin, end in regions:
+			code = self.view.substr(sublime.Region(begin, end))
+			# Skip whitespace
+			if re.match(r'\s+', code):
+				continue
+			pre_class += code
 		pre_class = re.sub('(' + (newline * 2) + ')+', (newline * 2), pre_class)
 
 		# Sort functions by visibility and name

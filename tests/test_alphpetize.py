@@ -34,6 +34,13 @@ class test_alphpetize_command(TestCase):
         self.view.run_command("alphpetize")
         self.assertEqual(self.get_contents(), self.get_file('test_basic_sorting_after.php'))
 
+    def test_readme_example(self):
+        "Ensure the readme example actually works"
+        contents = self.get_file('test_readme_test_before.php')
+        self.set_text(contents)
+        self.view.run_command("alphpetize")
+        self.assertEqual(self.get_contents(), self.get_file('test_readme_test_after.php'))
+
     def test_retain_style(self):
         "Retain style for already sorted classes"
         contents = self.get_file('test_retain_style.php')

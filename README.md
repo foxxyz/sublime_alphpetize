@@ -16,8 +16,8 @@ If you are using the [Sublime Package Manager](http://wbond.net/sublime_packages
 
 Clone the package into your Sublime Text 2/3 Packages directory:
 
-	git clone https://github.com/foxxyz/sublime_alphpetize.git Alphpetize
-	
+    git clone https://github.com/foxxyz/sublime_alphpetize.git Alphpetize
+    
 ### Without Git
 
 Grab the source from [Github](http://github.com/foxxyz/sublime_alphpetize), copy the whole directory into the Packages directory and rename it to "Alphpetize".
@@ -40,56 +40,54 @@ Example
 
 Consider the following file:
 
-	class Test {
-	
-		private function bottom() {
-		
-		}
-		
-		/**
-		 * This function rocks
-		 * @return void
-		 */
-		public function middle() {
+    class Test {
+    
+        private function bottom() {
+        
+        }
+        
+        /**
+         * This function rocks
+         * @return void
+         */
+        public function middle() {
 
-		}
-		
-		public function atTheTop() {
-		
-		}
-		
-		protected function leaveMe() {
-		
-		}
-		
-	}
-	
+        }
+        
+        public function atTheTop() {
+        
+        }
+        
+        protected function leaveMe() {
+        
+        }
+        
+    }
+    
 After running Alphpetize, it should look at follows:
 
-	class Test {
-	
-		public function atTheTop() {
-		
-		}
-	
-		/**
-		 * This function rocks
-		 * @return void
-		 */
-		public function middle() {
-
-		}
-		
-		protected function leaveMe() {
-		
-		}
-		
-		private function bottom() {
-		
-		}
-		
-	}
-	
+    class Test {
+        public function atTheTop() {
+        
+        }
+    
+        /**
+         * This function rocks
+         * @return void
+         */
+        public function middle() {
+        
+        }
+        
+        protected function leaveMe() {
+        
+        }
+        
+        private function bottom() {
+        
+        }    
+    }
+    
 And yes, Alphpetize can also handle files with multiple class definitions.
 
 ### What about static methods?
@@ -106,4 +104,9 @@ Methods defined inside of traits and interfaces are also sorted.
 
 ### What about everything else?
 
-Anything else found floating inbetween function definitions will be collected at the top of the class.
+Anything else found floating in-between function definitions will be collected at the top of the class.
+
+Testing
+-------
+
+Tests can be run using the nice [UnitTesting](https://github.com/randy3k/UnitTesting) plugin in Package Control. 
