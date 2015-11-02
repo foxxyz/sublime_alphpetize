@@ -1,0 +1,6 @@
+class A
+{
+    function test()
+    {
+    }
+}
