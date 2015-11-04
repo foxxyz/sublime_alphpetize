@@ -1,3 +1,4 @@
+<?php
 class Example
 {
     private function aFunction()
@@ -8,7 +9,15 @@ class Example
     {
     }
 
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        // Interesting things
+    }
+
     public function aaFunction()
     {
     }
 }
+?>

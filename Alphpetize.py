@@ -135,7 +135,7 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 		for begin, end in regions:
 			code = self.view.substr(sublime.Region(begin, end))
 			# Skip whitespace
-			if re.match(r'\s+', code):
+			if re.match(r'^\s+$', code):
 				continue
 			pre_class += code
 		pre_class = re.sub('(' + (newline * 2) + ')+', (newline * 2), pre_class)

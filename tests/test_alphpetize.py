@@ -47,3 +47,10 @@ class test_alphpetize_command(TestCase):
         self.set_text(contents)
         self.view.run_command("alphpetize")
         self.assertEqual(self.get_contents(), contents)
+
+    def test_retain_class_variables(self):
+        "Ensure class variables are preserved correctly"
+        contents = self.get_file('test_retain_class_variables.php')
+        self.set_text(contents)
+        self.view.run_command("alphpetize")
+        self.assertEqual(self.get_contents(), contents)

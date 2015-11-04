@@ -1,3 +1,4 @@
+<?php
 class Test {
     
     private function bottom() {
@@ -21,3 +22,4 @@ class Test {
     }
     
 }
+?>

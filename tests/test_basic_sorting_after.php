@@ -1,5 +1,13 @@
+<?php
 class Example
 {
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        // Interesting things
+    }
+
     public function aaFunction()
     {
     }
@@ -12,3 +20,4 @@ class Example
     {
     }
 }
+?>

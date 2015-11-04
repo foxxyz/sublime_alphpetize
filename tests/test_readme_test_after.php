@@ -1,3 +1,4 @@
+<?php
 class Test {
     public function atTheTop() {
     
@@ -19,3 +20,4 @@ class Test {
     
     }
 }
+?>
