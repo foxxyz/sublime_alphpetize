@@ -148,10 +148,10 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 
 		# Add pre-class code
 		if pre_class.strip('\n\r'):
-			sorted_classes.insert(0, pre_class.strip('\n\r'))
+			sorted_classes.insert(0, newline + pre_class.strip('\n\r'))
 
 		# Combine into string
-		sorted_class = (newline * 2).join(sorted_classes)
+		sorted_class = (newline * 2).join(sorted_classes) + newline
 
 		# Add padding
 		if self.settings.get('class_padding'):
