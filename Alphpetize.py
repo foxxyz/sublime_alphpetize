@@ -112,8 +112,9 @@ class AlphpetizeCommand(sublime_plugin.TextCommand):
 				if re.search('\s+static\s+', ffound.group(0)):
 					keyword += ' static'
 				# Prioritize to the top if listed in settings
-				if ffound.group(3) in self.settings.get('prioritize'):
-					sortName = '_____'
+				prioritize = self.settings.get('prioritize')
+				if ffound.group(3) in prioritize:
+					sortName = '_____{:04d}_{}'.format(prioritize.index(ffound.group(3)), ffound.group(3))
 				else:
 					sortName = ffound.group(3)
 				functions[keyword][sortName] = function_region
